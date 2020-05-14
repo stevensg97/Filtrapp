@@ -74,15 +74,23 @@ class App extends React.Component {
 
   _sendFile = async () => {
     if (this.state.selected) {
-      var reader  = new FileReader();
+      var reader = new FileReader();
       reader.onloadend = function () {
         var file = reader.result;
         var formData = new FormData();
         formData.append("image", file);
-        //console.log(formData.get('image').split(','))
-        console.log(formData.get('image').split(',').pop())
+        //console.log(formData.get('image').length)
+        //console.log(formData.get('image').split(',').pop())
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://sparsi.serveo.net", true);
+        //xhr.setRequestHeader("Client", 'Web');
+        //xhr.setRequestHeader("Content-Length", String(formData.get('image').length));
+        //xhr.setRequestHeader("Content-Disposition", 'form-data; name=""; filename="prueba.jpg"');
+        //xhr.setRequestHeader("Content-Type", 'image/png');
+        xhr.send(formData);
       }
-      reader.readAsDataURL(this.state.file)
+      //reader.readAsDataURL(this.state.file);
+      reader.readAsBinaryString(this.state.file);
 
     }
   };
