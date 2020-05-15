@@ -72,22 +72,38 @@ class App extends React.Component {
     await this.setState({ file: event.target.files[0], image: tmppath, selected: true }); /// if you want to upload latter
   }
 
-  _sendFile = async () => {
+  _sendFile = () => {
     if (this.state.selected) {
       var reader = new FileReader();
-      reader.onloadend = function () {
+      reader.onloadend = async function () {
         var file = reader.result;
         var formData = new FormData();
         formData.append("image", file);
-        //console.log(formData.get('image').length)
+        console.log(formData.get('image').length);
+        var myHeaders = new Headers();
+        myHeaders.append("Client", "Web");
+        myHeaders.append("Connection", "");
+        myHeaders.append("Content-Disposition", 'form-data; name=""; filename="pingui.jpg"');
+        myHeaders.append("Content-Type", "image/jpeg");
+
+        var miInit = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formData
+        };
+
+        await fetch('http://localhost:1717', miInit)
+          .then(response => response.json())
+          .catch(error => console.error('Error:', error))
+          .then(response => console.log('Success:', response));
         //console.log(formData.get('image').split(',').pop())
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://sparsi.serveo.net", true);
-        //xhr.setRequestHeader("Client", 'Web');
-        //xhr.setRequestHeader("Content-Length", String(formData.get('image').length));
-        //xhr.setRequestHeader("Content-Disposition", 'form-data; name=""; filename="prueba.jpg"');
-        //xhr.setRequestHeader("Content-Type", 'image/png');
-        xhr.send(formData);
+        /* var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:1717");
+        xhr.setRequestHeader("Client", 'Web');
+        //xhr.setRequestHeader("Content-Length", formData.get('image').length);
+        xhr.setRequestHeader("Content-Disposition", 'form-data; name=""; filename="prueba.jpg"');
+        xhr.setRequestHeader("Content-Type", 'image/jpeg');
+        xhr.send(formData); */
       }
       //reader.readAsDataURL(this.state.file);
       reader.readAsBinaryString(this.state.file);
